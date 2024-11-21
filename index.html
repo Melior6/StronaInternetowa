@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Roulette</title>
+    <link rel="shortcut icon" type="image/png" href="shotterudLogo.png">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body onload="init()">
+    <center>
+        <div>
+            <!-- Pole do ustawiania salda -->
+            <h2>Player's Balance</h2>
+            <input type="number" id="playerBalance" placeholder="Enter your balance" min="0">
+            <button onclick="setBalance()">Set Balance</button>
+        </div>
+        <div>
+            <!-- Zakłady -->
+            <h2>Place Your Bet</h2>
+            <input type="number" id="betAmount" placeholder="Enter bet amount" min="0">
+            <button onclick="setBetAmount()">Set Bet Amount</button>
+        </div>
+        <div>
+            <!-- Wyświetlanie salda i zakładów -->
+            <p id="balanceDisplay">Balance: 0</p>
+            <p id="betDisplay"></p>
+        </div>
+    </center>
+    <div class="rouletteContainer">
+        <div class="line"></div>
+        <div id="nienawidzeMojegoScruma" class="roulette"></div>
+    </div>
+    <br><br><br><br><br><br><br><br>
+    <center>
+        <div>
+            <button id="startButton" onclick="play()">Roll</button>
+        </div>
+    </center>
+    <br><br>
+    <div style="text-align: center; margin-top: 20px;">
+        <h3>Bet on a Number, Color, or Zero</h3>
+        <input type="number" id="numberBet" placeholder="Enter a number (0-36)" min="0" max="36">
+        <button onclick="betOnNumber()">Bet on Number</button>
+        <br><br>
+        <button onclick="betOnColor('red')" style="background-color: red; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px;">Bet on Red</button>
+        <button onclick="betOnColor('black')" style="background-color: black; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px;">Bet on Black</button>
+        <br><br>
+        <button onclick="betOnZero()" style="background-color: green; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px;">Bet on 0</button>
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <h3>Bet on a Range</h3>
+        <button onclick="betOnRange('1st 12')" style="background-color: green; color: white; border: none; padding: 10px; margin: 5px; cursor: pointer; border-radius: 5px;">1st 12</button>
+        <button onclick="betOnRange('2nd 12')" style="background-color: green; color: white; border: none; padding: 10px; margin: 5px; cursor: pointer; border-radius: 5px;">2nd 12</button>
+        <button onclick="betOnRange('3rd 12')" style="background-color: green; color: white; border: none; padding: 10px; margin: 5px; cursor: pointer; border-radius: 5px;">3rd 12</button>
+        <br><br>
+        <h3>Additional Bets</h3>
+        <button onclick="betOnRange('1 to 18')" style="background-color: green; color: white; border: none; padding: 10px; margin: 5px; cursor: pointer; border-radius: 5px;">1 to 18</button>
+        <button onclick="betOnRange('EVEN')" style="background-color: green; color: white; border: none; padding: 10px; margin: 5px; cursor: pointer; border-radius: 5px;">EVEN</button>
+        <button onclick="betOnRange('ODD')" style="background-color: green; color: white; border: none; padding: 10px; margin: 5px; cursor: pointer; border-radius: 5px;">ODD</button>
+        <button onclick="betOnRange('19 to 36')" style="background-color: green; color: white; border: none; padding: 10px; margin: 5px; cursor: pointer; border-radius: 5px;">19 to 36</button>
+    </div>
+    <div id="winners" class="winners"></div>
+    <br><br>
+    <br>
+    </div>
+    <br>
+</body>
+<script>
+    var amountOfBoxes = 37; // Liczba pól na ruletce (0-36)
+    var rouletteNumbers = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
+    var rouletteColors = [
+        "green", // 0
+        "red", "black", "red", "black", "red", "black", "red", "black", "red", "black",
+        "black", "red", "black", "red", "black", "red", "black", "red", "black", "red",
+        "red", "black", "red", "black", "red", "black", "red", "black", "red", "black",
+        "black", "red", "black", "red", "black", "red"
+    ];
+
+    var balance = 0;
+    var betAmount = 0;
+    var currentBets = [];
+
+    function init() {
+        let roulette = document.getElementById("nienawidzeMojegoScruma");
+        roulette.innerHTML = "";
+
+        for (var i = 0; i < amountOfBoxes; i++) {
+            var node = document.createElement("div");
+            var h3 = document.createElement("h3");
+            h3.innerHTML = rouletteNumbers[i];
+            h3.style.backgroundColor = rouletteColors[i];
+            h3.style.color = rouletteColors[i] === "black" ? "white" : "black";
+            node.appendChild(h3);
+            roulette.appendChild(node);
+        }
+    }
+
+    function setBalance() {
+        var inputBalance = parseInt(document.getElementById("playerBalance").value);
+        if (!isNaN(inputBalance) && inputBalance > 0) {
+            balance = inputBalance;
+            document.getElementById("balanceDisplay").innerText = `Balance: ${balance}`;
+            alert("Balance updated successfully!");
+        } else {
+            alert("Please enter a valid balance.");
+        }
+    }
+
+    function setBetAmount() {
+        var inputBetAmount = parseInt(document.getElementById("betAmount").value);
+        if (!isNaN(inputBetAmount) && inputBetAmount > 0) {
+            betAmount = inputBetAmount;
+            alert(`Bet amount set to ${betAmount}`);
+        } else {
+            alert("Please enter a valid bet amount.");
+        }
+    }
+
+    function betOnColor(color) {
+        if (betAmount > 0 && betAmount <= balance) {
+            currentBets.push({ type: "color", value: color, amount: betAmount });
+            balance -= betAmount;
+            document.getElementById("balanceDisplay").innerText = `Balance: ${balance}`;
+            updateBetDisplay();
+        } else {
+            alert("Invalid bet. Make sure you've set a bet amount and have enough balance.");
+        }
+    }
+
+    function betOnNumber() {
+        var numberBet = parseInt(document.getElementById("numberBet").value);
+        if (!isNaN(numberBet) && numberBet >= 0 && numberBet <= 36 && betAmount > 0 && betAmount <= balance) {
+            currentBets.push({ type: "number", value: numberBet, amount: betAmount });
+            balance -= betAmount;
+            document.getElementById("balanceDisplay").innerText = `Balance: ${balance}`;
+            updateBetDisplay();
+        } else {
+            alert("Invalid bet. Enter a valid number and make sure you have enough balance.");
+        }
+    }
+
+    function betOnZero() {
+        if (betAmount > 0 && betAmount <= balance) {
+            currentBets.push({ type: "number", value: 0, amount: betAmount });
+            balance -= betAmount;
+            document.getElementById("balanceDisplay").innerText = `Balance: ${balance}`;
+            updateBetDisplay();
+        } else {
+            alert("Invalid bet. Make sure you've set a bet amount and have enough balance.");
+        }
+    }
+
+    function betOnRange(range) {
+        if (betAmount > 0 && betAmount <= balance) {
+            currentBets.push({ type: "range", value: range, amount: betAmount });
+            balance -= betAmount;
+            document.getElementById("balanceDisplay").innerText = `Balance: ${balance}`;
+            updateBetDisplay();
+        } else {
+            alert("Invalid bet. Make sure you've set a bet amount and have enough balance.");
+        }
+    }
+
+    function updateBetDisplay() {
+        const betList = currentBets.map(bet => `${bet.amount} on ${bet.type === "color" ? bet.value : bet.type === "number" ? `number ${bet.value}` : bet.value}`).join(", ");
+        document.getElementById("betDisplay").innerText = `Bets: ${betList}`;
+    }
+
+    function play() {
+        var offset = rand(0, amountOfBoxes * 140 - 180) + 180;
+        document.getElementById("nienawidzeMojegoScruma").style.left = -(offset - 180) + "px";
+
+        setTimeout(function () {
+            let winningNumber = rouletteNumbers[Math.floor(offset / 140) % amountOfBoxes];
+            let winningColor = rouletteColors[winningNumber];
+            let chosenPlayer = document.createElement("div");
+            chosenPlayer.innerHTML = `Winning Number: ${winningNumber} (${winningColor})`;
+            chosenPlayer.style.color = winningColor;
+            chosenPlayer.style.fontSize = "24px";
+            document.getElementById("winners").appendChild(chosenPlayer);
+
+            let totalWinnings = 0;
+            currentBets.forEach(bet => {
+                if (bet.type === "color" && bet.value === winningColor) {
+                    totalWinnings += bet.amount * 2;
+                } else if (bet.type === "number" && bet.value === winningNumber) {
+                    totalWinnings += bet.amount * 35;
+                } else if (bet.type === "range") {
+                    if ((bet.value === "1 to 18" && winningNumber >= 1 && winningNumber <= 18) ||
+                        (bet.value === "19 to 36" && winningNumber >= 19 && winningNumber <= 36) ||
+                        (bet.value === "EVEN" && winningNumber % 2 === 0 && winningNumber !== 0) ||
+                        (bet.value === "ODD" && winningNumber % 2 !== 0) ||
+                        (bet.value === "1st 12" && winningNumber >= 1 && winningNumber <= 12) ||
+                        (bet.value === "2nd 12" && winningNumber >= 13 && winningNumber <= 24) ||
+                        (bet.value === "3rd 12" && winningNumber >= 25 && winningNumber <= 36)) {
+                        totalWinnings += bet.amount * (bet.value.includes("12") ? 3 : 2);
+                    }
+                }
+            });
+
+            if (totalWinnings > 0) {
+                balance += totalWinnings;
+                alert(`Congratulations! You won ${totalWinnings}!`);
+            } else {
+                alert("You lost. Better luck next time!");
+            }
+
+            currentBets = [];
+            document.getElementById("balanceDisplay").innerText = `Balance: ${balance}`;
+            updateBetDisplay();
+
+            document.getElementById("nienawidzeMojegoScruma").style.transitionDuration = "0s";
+            document.getElementById("nienawidzeMojegoScruma").style.left = "0px";
+            setTimeout(function () {
+                document.getElementById("nienawidzeMojegoScruma").style.transitionDuration = "5s";
+            }, 50);
+        }, 5500);
+    }
+
+    function rand(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+</script>
+</html>
