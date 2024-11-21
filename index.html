@@ -8,26 +8,23 @@
 <body onload="init()">
     <center>
         <div>
-            <!-- Pole do ustawiania salda -->
             <h2>Player's Balance</h2>
             <input type="number" id="playerBalance" placeholder="Enter your balance" min="0">
             <button onclick="setBalance()">Set Balance</button>
         </div>
         <div>
-            <!-- Zakłady -->
             <h2>Place Your Bet</h2>
             <input type="number" id="betAmount" placeholder="Enter bet amount" min="0">
             <button onclick="setBetAmount()">Set Bet Amount</button>
         </div>
         <div>
-            <!-- Wyświetlanie salda i zakładów -->
             <p id="balanceDisplay">Balance: 0</p>
             <p id="betDisplay"></p>
         </div>
     </center>
     <div class="rouletteContainer">
         <div class="line"></div>
-        <div id="nienawidzeMojegoScruma" class="roulette"></div>
+        <div id="roulette" class="roulette"></div>
     </div>
     <br><br><br><br><br><br><br><br>
     <center>
@@ -65,10 +62,10 @@
     <br>
 </body>
 <script>
-    var amountOfBoxes = 37; // Liczba pól na ruletce (0-36)
+    var amountOfBoxes = 37;
     var rouletteNumbers = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
     var rouletteColors = [
-        "green", // 0
+        "green",
         "red", "black", "red", "black", "red", "black", "red", "black", "red", "black",
         "black", "red", "black", "red", "black", "red", "black", "red", "black", "red",
         "red", "black", "red", "black", "red", "black", "red", "black", "red", "black",
@@ -80,7 +77,7 @@
     var currentBets = [];
 
     function init() {
-        let roulette = document.getElementById("nienawidzeMojegoScruma");
+        let roulette = document.getElementById("roulette");
         roulette.innerHTML = "";
 
         for (var i = 0; i < amountOfBoxes; i++) {
@@ -167,7 +164,7 @@
 
     function play() {
         var offset = rand(0, amountOfBoxes * 140 - 180) + 180;
-        document.getElementById("nienawidzeMojegoScruma").style.left = -(offset - 180) + "px";
+        document.getElementById("roulette").style.left = -(offset - 180) + "px";
 
         setTimeout(function () {
             let winningNumber = rouletteNumbers[Math.floor(offset / 140) % amountOfBoxes];
@@ -208,10 +205,10 @@
             document.getElementById("balanceDisplay").innerText = `Balance: ${balance}`;
             updateBetDisplay();
 
-            document.getElementById("nienawidzeMojegoScruma").style.transitionDuration = "0s";
-            document.getElementById("nienawidzeMojegoScruma").style.left = "0px";
+            document.getElementById("roulette").style.transitionDuration = "0s";
+            document.getElementById("roulette").style.left = "0px";
             setTimeout(function () {
-                document.getElementById("nienawidzeMojegoScruma").style.transitionDuration = "5s";
+                document.getElementById("roulette").style.transitionDuration = "5s";
             }, 50);
         }, 5500);
     }
