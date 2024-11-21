@@ -147,7 +147,7 @@ func usersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := db.Query("SELECT id, username, email, created_at, updated_at FROM users")
+	rows, err := db.Query("SELECT id, username, email, password_hash, created_at, updated_at FROM users")
 	if err != nil {
 		http.Error(w, "Error retrieving users", http.StatusInternalServerError)
 		return
@@ -157,7 +157,7 @@ func usersHandler(w http.ResponseWriter, r *http.Request) {
 	var users []User
 	for rows.Next() {
 		var user User
-		err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+		err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt)
 		if err != nil {
 			http.Error(w, "Error scanning user data", http.StatusInternalServerError)
 			return
