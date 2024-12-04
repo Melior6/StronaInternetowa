@@ -1,0 +1,58 @@
+.App {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin-top: 50px;
+  }
+  
+  .slot-machine {
+    display: inline-block;
+    border: 2px solid #333;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .slots {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .slot {
+    font-size: 3em;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  button:disabled {
+    background-color: #ccc;
+  }
+  
+  label {
+    font-size: 1.2em;
+  }
+  
+  input {
+    padding: 5px;
+    font-size: 1.2em;
+    width: 80px;
+    text-align: center;
+    margin-left: 10px;
+  }
+  
